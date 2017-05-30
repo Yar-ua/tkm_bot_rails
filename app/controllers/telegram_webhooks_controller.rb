@@ -2,13 +2,44 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   include Telegram::Bot::UpdatesController::MessageContext
   context_to_action!
 
+  # назначаем OpenWeather API key
+  # ow_api_key = 'f13a8139e0c1140a87a69282d21af141'
+
+  # пример успешного запроса
+  #http://api.openweathermap.org/data/2.5/weather?q=sumy&APPID=f13a8139e0c1140a87a69282d21af141
+  #
+
+  
   def start(*)
-    respond_with :message, text: 'bot started'
+    respond_with :message, text: t('.content')
   end
 
+  
+  # команда нуждается в доработке
   def help(*)
     respond_with :message, text: t('.content')
   end
+
+
+  # текущая погода в указанном городе
+  def weather(*)
+    # получаем погоду из функции хелпера
+    # helper WeatherHelper
+    #get_weather
+
+    require 'net/http'
+    require 'uri'  
+      
+    url = "http://api.openweathermap.org/data/2.5/weather?q=sumy&APPID=f13a8139e0c1140a87a69282d21af141"
+    uri = URI.parse(url)
+    response = NET::HTTP.get_response(uri)
+    @weather = response
+
+
+    respond_with :message, text: @weather
+    #
+  end
+
 
   def memo(*args)
     if args.any?

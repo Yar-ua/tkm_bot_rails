@@ -42,4 +42,6 @@ ru:
     remind_me:
       nothing: Nothing to remind
     start:
-      content: Hi there!
+      content: |
+        Bot started
+        для просмотра списка возможностей введите /help
