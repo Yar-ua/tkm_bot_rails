@@ -3,7 +3,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   context_to_action!
 
   def start(*)
-    respond_with :message, text: t('.content')
+    respond_with :message, text: 'bot started'
   end
 
   def help(*)
