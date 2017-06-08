@@ -32,15 +32,18 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   # ф-ия - текущая погода в указанном городе
   def weather(city = nil, *)
 
-    url = "http://api.openweathermap.org/data/2.5/weather?q=#{city}&APPID=f13a8139e0c1140a87a69282d21af141"
+    url = "http://api.openweathermap.org/data/2.5/weather?q=#{city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric"
+    # url = "http://api.openweathermap.org/data/2.5/weather?q=#{city}&APPID=f13a8139e0c1140a87a69282d21af141"
+    # в конце приписана русская локализация далее надо добавить единицы измерения в с-ме СИ
+    
     uri = URI.parse(url)
     response = Net::HTTP.get_response(uri)
     @weather = JSON.parse(response.body)
 
     # получаем ответ из хелпера в удобочитаемом формате
-    a = answer_weather(@weather)
+    # a = answer_weather(@weather)
 
-    respond_with :message, text: a
+    respond_with :message, text: @weather
 
     
   end
