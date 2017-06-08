@@ -35,12 +35,13 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     url = "http://api.openweathermap.org/data/2.5/weather?q=#{city}&APPID=f13a8139e0c1140a87a69282d21af141"
     uri = URI.parse(url)
     response = Net::HTTP.get_response(uri)
-    weather = JSON.parse(response.body)
+    @weather = JSON.parse(response.body)
 
+    # получаем ответ из хелпера в удобочитаемом формате
+    a = answer_weather(@weather)
 
-    respond_with :message, text: weather
-    respond_with :message, text: response.code
-    respond_with :message, text: city
+    respond_with :message, text: a
+
     
   end
 
