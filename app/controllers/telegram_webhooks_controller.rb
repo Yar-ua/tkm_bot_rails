@@ -30,6 +30,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
 
     require 'net/http'
     require 'uri'  
+
       
 
     url = "http://api.openweathermap.org/data/2.5/weather?q=sumy&APPID=f13a8139e0c1140a87a69282d21af141"
