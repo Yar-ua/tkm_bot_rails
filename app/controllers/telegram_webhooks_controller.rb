@@ -2,7 +2,12 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   include Telegram::Bot::UpdatesController::MessageContext
   context_to_action!
 
+  # в этом хелпере парсим из JSON ответ в удобочитаемом виде
   include WeatherHelper
+
+  require 'net/http'
+  require 'uri'
+  require 'json'
 
   # назначаем OpenWeather API key
   # ow_api_key = 'f13a8139e0c1140a87a69282d21af141'
@@ -27,16 +32,15 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   # ф-ия - текущая погода в указанном городе
   def weather(city = nil, *)
 
-    require 'net/http'
-    require 'uri'
-    
     url = "http://api.openweathermap.org/data/2.5/weather?q=#{city}&APPID=f13a8139e0c1140a87a69282d21af141"
     uri = URI.parse(url)
     response = Net::HTTP.get_response(uri)
-    @weather = response.body
+    weather = JSON.parse(response.body)
 
 
-    respond_with :message, text: @weather
+    respond_with :message, text: weather
+    respond_with :message, text: response.code
+    respond_with :message, text: city
     
   end
 
