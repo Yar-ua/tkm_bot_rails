@@ -1,27 +1,16 @@
-# Example telegram bot app
+# tkm_bot app
 
 This app uses [telegram-bot](https://github.com/telegram-bot-rb/telegram-bot) gem.
-Want to see the [bot code](https://github.com/telegram-bot-rb/telegram_bot_app/blob/master/app/controllers/telegram_webhooks_controller.rb)
-first?
 
-Explore separate commits to check evolution of code.
+This application developed for resieving weather.
 
-Want a clean setup instead?
-Here is [app teamplate](https://github.com/telegram-bot-rb/rails_template) to help you.
+Next planes - add following for the Nova Poshta packages.
+
+
 
 ## Commands
 
-- `/start` - Greeting.
-- `/help`
-- `/memo %text%` - Saves text to session.
-- `/remind_me` - Replies with text from session.
-- `/keyboard` - Simple keyboard.
-- `/inline_keyboard` - Inline keyboard example.
-- Inline queries. Enable it in [@BotFather](https://telegram.me/BotFather),
-  and your're ready to try 'em.
-- `/last_chosen_inline_result` - Your last chosen inline result
-  (Enable feedback with sending `/setinlinefeedback`
-  to [@BotFather](https://telegram.me/BotFather)).
+< ... in process ... >
 
 ## Setup
 
