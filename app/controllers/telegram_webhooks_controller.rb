@@ -44,8 +44,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     weather_to_user = weather_list(@weather)
 
     respond_with :message, text: weather_to_user
-
-    
+        
   end
 
 #####################
