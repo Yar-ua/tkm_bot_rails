@@ -30,6 +30,20 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
 
+  # оформляем меню погоды wmenu
+  def wmenu
+    respond_with :message, text: t('.prompt'), reply_markup: {
+      inline_keyboard: [
+        [
+          {text: t('.current_weather')},
+          {text: t('.5_weather')},
+        ]
+      ]
+    }
+  end
+
+
+
   # ф-ия - текущая погода в указанном городе
   def weather(city = nil, *)
 
