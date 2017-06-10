@@ -29,37 +29,46 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     respond_with :message, text: t('.content')
   end
 
-
-  # оформляем меню погоды wmenu
-  def wmenu
-    respond_with :message, text: t('.prompt'), reply_markup: {
-      inline_keyboard: [
-        [
-          {text: t('.current_weather')},
-          {text: t('.5_weather')},
-        ]
-      ]
-    }
-  end
-
-
-
   # ф-ия - текущая погода в указанном городе
   def weather(city = nil, *)
 
-    url = "http://api.openweathermap.org/data/2.5/weather?q=#{city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric"
-    # в конце приписана русская локализация и единицы измерения в с-ме СИ
-    
-    uri = URI.parse(url)
-    response = Net::HTTP.get_response(uri)
-    @weather = JSON.parse(response.body)
+    if city
+      url = "http://api.openweathermap.org/data/2.5/weather?q=#{city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric"
+      # в конце приписана русская локализация и единицы измерения в с-ме СИ
+      
+      uri = URI.parse(url)
+      response = Net::HTTP.get_response(uri)
+      @weather = JSON.parse(response.body)
 
-    # получаем ответ из хелпера в удобочитаемом формате
-    weather_to_user = weather_list(@weather)
+      # получаем ответ из хелпера в удобочитаемом формате
+      weather_to_user = weather_list(@weather)
 
-    respond_with :message, text: weather_to_user
-        
+      respond_with :message, text: weather_to_user
+
+    else 
+      respond_with :message, text: "вы не ввели название городе, повторите еще раз"
+    end
+
   end
+
+
+
+
+
+  # оформляем меню погоды wmenu
+  # def wmenu
+  #   respond_with :message, text: t('.prompt'), reply_markup: {
+  #    inline_keyboard: [
+  #      [
+  #        {text: t('.current_weather'), callback_data: 'alert'},
+  #        {text: t('.5_weather'), callback_data: 'no_alert'},
+  #      ],
+  #      [{text: "...далее будет...", callback_data: 'находится в разработке'}],
+  #    ],
+  #  }
+  # end
+
+
 
 #####################
   def memo(*args)
