@@ -38,12 +38,21 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
       
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
-      @weather = JSON.parse(response.body)
 
-      # получаем ответ из хелпера в удобочитаемом формате
-      weather_to_user = weather_list(@weather)
+      # определение, прошел ли запрос успешно
+      case response.code
+      when '200' then
+        @weather = JSON.parse(response.body)
 
-      respond_with :message, text: weather_to_user
+        # получаем ответ из хелпера в удобочитаемом формате
+        weather_to_user = weather_list(@weather)
+
+        respond_with :message, text: weather_to_user
+      when '404'
+        respond_with :message, text: "неверное название города"
+      else
+         respond_with :message, text: "что то пошло не так, код ошибки #{response.code}"
+      end
 
     else 
       respond_with :message, text: "вы не ввели название городе, повторите еще раз"
