@@ -40,7 +40,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     end
 
 
-    def weather_3
+    def get_3_weather
       #
     end
   end
@@ -58,6 +58,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     respond_with :message, text: t('.content')
   end
 
+#------------------------------------------------
   # ф-ия - текущая погода в указанном городе
   def weather(city = nil, *)
 
@@ -76,16 +77,29 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
       weather_to_user = weather_list(JSON.parse(result.body))
       respond_with :message, text: weather_to_user
     when '404'
-      respond_with :message, text: "неверное название города"
+      respond_with :message, text: "Неверное написано название города или на Ваш город не дается прогноз. 
+      Список поддерживаемых городов можно увидеть тут http://bulk.openweathermap.org/sample/"
     else
-      respond_with :message, text: "что то пошло не так"
+      respond_with :message, text: "Что то пошло не так"
     end
 
-  #  else 
-      #respond_with :message, text: "вы не ввели название городе, повторите еще раз"
-    #end
-
   end
+
+
+#------------------------------------------------
+  # прогноз погоды на 3 дня
+  def weather3(city = nil, *)
+    # инициализация класса погоды
+    weather_answer = GetWeather.new(city)
+    # дать запрос и получить ответ с погодой на # дня
+    result = weather_answer.get_3_weather
+    #
+  end
+
+
+
+
+
 
 
 

@@ -15,7 +15,7 @@ ru:
       content: |
         Доступные команды:
         /weather city - просмотр текущей погоды в городе (название города писать на английском без кавычек и т д)
-        /weather3 city - прогноз погоды на 3 дня
+        /weather3 city - прогноз погоды на 3 дня, город указывать аналогично
     inline_keyboard:
       alert: Answer with alert
       no_alert: Without alert
