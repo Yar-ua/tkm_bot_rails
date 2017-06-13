@@ -6,17 +6,46 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   require 'uri'
   require 'json'
 
-
   # в этом хелпере парсим из JSON ответ в удобочитаемом виде
   include WeatherHelper
 
-  # назначаем OpenWeather API key
-  # ow_api_key = 'f13a8139e0c1140a87a69282d21af141'
+  # класс для погоды
+  class GetWeather
+    require 'net/http'
+    require 'uri'
+    require 'json'
+    
 
-  # пример успешного запроса из документации
-  # http://api.openweathermap.org/data/2.5/weather?q=sumy&APPID=f13a8139e0c1140a87a69282d21af141
-  #
+    def initialize(value)
+      @city = value
+    end
 
+
+    # валидация класса на корректное имя города, ответ http200ok и т д
+    def validate
+
+    end
+
+
+    def get_current_weather
+      url = "http://api.openweathermap.org/data/2.5/weather?q=#{@city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric"
+      # в конце приписана русская локализация и единицы измерения в с-ме СИ
+    
+      uri = URI.parse(url)
+      response = Net::HTTP.get_response(uri)
+      # из за русской локализации ответя необходимо конвертировать кодировку
+      response.body = response.body.force_encoding('UTF-8')
+
+      return response
+    end
+
+
+    def weather_3
+      #
+    end
+  end
+
+############################################################
   
   # ответ бота по команде старт
   def start(*)
@@ -32,31 +61,29 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   # ф-ия - текущая погода в указанном городе
   def weather(city = nil, *)
 
-    if city
-      url = "http://api.openweathermap.org/data/2.5/weather?q=#{city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric"
-      # в конце приписана русская локализация и единицы измерения в с-ме СИ
-      
-      uri = URI.parse(url)
-      response = Net::HTTP.get_response(uri)
+   # инициализация класса погоды
+   weather_answer = GetWeather.new(city)
+   # дать запрос и получить ответ с погодой 
+   result = weather_answer.get_current_weather
+   # дальнейшие действия и сообщения в зависимости от кода ответа
+   # определение, прошел ли запрос успешно
+   case result.code
+    # если код 200 ок то работаем дальше
+    when '200' then
+      #@weather = JSON.parse(@response.body)
 
-      # определение, прошел ли запрос успешно
-      case response.code
-      when '200' then
-        @weather = JSON.parse(response.body)
-
-        # получаем ответ из хелпера в удобочитаемом формате
-        weather_to_user = weather_list(@weather)
-
-        respond_with :message, text: weather_to_user
-      when '404'
-        respond_with :message, text: "неверное название города"
-      else
-         respond_with :message, text: "что то пошло не так, код ошибки #{response.code}"
-      end
-
-    else 
-      respond_with :message, text: "вы не ввели название городе, повторите еще раз"
+      # получаем ответ из хелпера в удобочитаемом формате
+      weather_to_user = weather_list(JSON.parse(result.body))
+      respond_with :message, text: weather_to_user
+    when '404'
+      respond_with :message, text: "неверное название города"
+    else
+      respond_with :message, text: "что то пошло не так"
     end
+
+  #  else 
+      #respond_with :message, text: "вы не ввели название городе, повторите еще раз"
+    #end
 
   end
 
