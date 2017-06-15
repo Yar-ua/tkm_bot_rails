@@ -36,10 +36,11 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
 
 
     def get_3_weather
-      url = "http://api.openweathermap.org/data/2.5/forecast?q=#{@city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric"
+      url = "http://api.openweathermap.org/data/2.5/forecast?q=#{@city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric&cnt=5"
     
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
+      response.body = response.body.force_encoding('UTF-8')
       # из за русской локализации ответя необходимо конвертировать кодировку
       # response.body = response.body.force_encoding('UTF-8')
 
@@ -95,7 +96,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     weather_answer = GetWeather.new(city)
     # дать запрос и получить ответ с погодой на 3 дня
     result = weather_answer.get_3_weather
-    respond_with :message, text: result.body[0..256]
+    respond_with :message, text: result.body.to_json
   end
 
 
