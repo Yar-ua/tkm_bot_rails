@@ -22,4 +22,14 @@ module WeatherHelper
 
   end
 
+  
+  def rate_list(value)
+    answer = "------
+    наличный курс валют по отделениям ПБ:
+    #{value[0]['ccy']} к #{value[0]['base_ccy']}: покупка #{(value[0]['buy']).to_f.round(3)}, продажа #{(value[0]['sale']).to_f.round(3)}
+    #{value[1]['ccy']} к #{value[1]['base_ccy']}: покупка #{(value[1]['buy']).to_f.round(3)}, продажа #{(value[1]['sale']).to_f.round(3)}
+    #{value[2]['ccy']} к #{value[2]['base_ccy']}: покупка #{(value[2]['buy']).to_f.round(3)}, продажа #{(value[2]['sale']).to_f.round(3)}"
+  end
+
+
 end
