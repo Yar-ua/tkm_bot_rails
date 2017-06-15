@@ -24,6 +24,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     # валидация класса на корректное имя города, ответ http200ok и т д
     def validate
 
+
     end
 
 
@@ -37,12 +38,22 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
       response.body = response.body.force_encoding('UTF-8')
 
       return response
+
     end
 
 
     def get_3_weather
-      #
+      url = "http://api.openweathermap.org/data/2.5/forecast?q=#{@city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric"
+    
+      uri = URI.parse(url)
+      response = Net::HTTP.get_response(uri)
+      # из за русской локализации ответя необходимо конвертировать кодировку
+      # response.body = response.body.force_encoding('UTF-8')
+
+      return response
+
     end
+
   end
 
 ############################################################
@@ -71,8 +82,6 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
    case result.code
     # если код 200 ок то работаем дальше
     when '200' then
-      #@weather = JSON.parse(@response.body)
-
       # получаем ответ из хелпера в удобочитаемом формате
       weather_to_user = weather_list(JSON.parse(result.body))
       respond_with :message, text: weather_to_user
@@ -93,7 +102,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     weather_answer = GetWeather.new(city)
     # дать запрос и получить ответ с погодой на # дня
     result = weather_answer.get_3_weather
-    #
+    respond_with :message, text: result.body[0..256]
   end
 
 
