@@ -36,7 +36,8 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
 
 
     def get_3_weather
-      url = "http://api.openweathermap.org/data/2.5/forecast?q=#{@city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric&cnt=5"
+      # прогноз запрашиваем на 3 дня а не на 5, в конце запроса значение cnt=32
+      url = "http://api.openweathermap.org/data/2.5/forecast?q=#{@city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric&cnt=32"
     
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
@@ -95,8 +96,8 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     # инициализация класса погоды
     weather_answer = GetWeather.new(city)
     # дать запрос и получить ответ с погодой на 3 дня
-    result = weather_answer.get_3_weather
-    respond_with :message, text: result.body.to_json
+    weather_to_user = weather3_list(JSON.parse(weather_answer.get_3_weather.body))
+    respond_with :message, text: weather_to_user
   end
 
 
