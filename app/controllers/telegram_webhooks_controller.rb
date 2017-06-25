@@ -97,7 +97,9 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     weather_answer = GetWeather.new(city)
     # дать запрос и получить ответ с погодой на 3 дня
     weather_to_user = weather3_list(JSON.parse(weather_answer.get_3_weather.body))
-    respond_with :message, text: weather_to_user
+    weather_to_user.each do |message|
+      respond_with :message, text: message
+    end
   end
 
 

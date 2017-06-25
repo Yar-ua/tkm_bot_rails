@@ -2,6 +2,7 @@ module WeatherHelper
 
   def weather_list(value)
 
+    # подготовка ответа о текущей погоде
     # для перевода кПа в мм рт ст
     # 1 kPa = 7.5 mmHg
 
@@ -24,20 +25,28 @@ module WeatherHelper
 
 
   def weather3_list(value)
+
+    # ответ о погоде на 3 дня
+    answer = []
+    # из ответа выделяем информацию о погоде в 0, 6, 12 и 18 часов
     array = []
     (0..value['list'].count-1).each do |i|
       time = value['list'][i]['dt_txt']
-      if time[11..18] == "18:00:00"
+      if time[11..18] == "00:00:00" or time[11..18] == "06:00:00" or time[11..18] == "12:00:00" or time[11..18] == "18:00:00"
         array << value['list'][i]
       end
-    
     end
-    answer = array
+    
+    array.each do |value|
+      answer << weather_list(value)
+    end
+
     return answer
   end
 
   
   def rate_list(value)
+    # курс валют по Приватбанку
     answer = "------
     наличный курс валют по отделениям ПБ:
     #{value[0]['ccy']} к #{value[0]['base_ccy']}: покупка #{(value[0]['buy']).to_f.round(3)}, продажа #{(value[0]['sale']).to_f.round(3)}
