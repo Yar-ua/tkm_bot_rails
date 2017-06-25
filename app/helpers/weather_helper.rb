@@ -24,20 +24,15 @@ module WeatherHelper
 
 
   def weather3_list(value)
-    answer = ''
-   # (0..value['list'].count-1).each do |i|
-    #  a = value['list'][i]['dt_txt']
-     # if a[11..18] == "18:00:00"
-     #   answer = answer + " #{value['list'][i]['dt_txt']} "
-     # end
-    #a = value['list'][0]['dt_txt']
-    #if a == '21:00:00'
-     # if a[11..18] == '12:00:00'
-      #{}" #{value['list'][0]['dt_txt']}" + '+++'
-    #else
-    #  answer = '---'
-    #end
-
+    array = []
+    (0..value['list'].count-1).each do |i|
+      time = value['list'][i]['dt_txt']
+      if time[11..18] == "18:00:00"
+        array << value['list'][i]
+      end
+    
+    end
+    answer = array
     return answer
   end
 
