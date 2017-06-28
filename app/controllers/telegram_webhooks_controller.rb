@@ -21,9 +21,7 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     end
 
 
-    def get_current_weather
-      url = "http://api.openweathermap.org/data/2.5/weather?q=#{@city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric"
-      # в конце приписана русская локализация и единицы измерения в с-ме СИ
+    def get_weather(url)
     
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
@@ -34,20 +32,6 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
 
     end
 
-
-    def get_3_weather
-      # прогноз запрашиваем на 3 дня а не на 5, в конце запроса значение cnt=32
-      url = "http://api.openweathermap.org/data/2.5/forecast?q=#{@city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric&cnt=32"
-    
-      uri = URI.parse(url)
-      response = Net::HTTP.get_response(uri)
-      response.body = response.body.force_encoding('UTF-8')
-      # из за русской локализации ответя необходимо конвертировать кодировку
-      # response.body = response.body.force_encoding('UTF-8')
-
-      return response
-
-    end
 
   end
 
@@ -68,26 +52,20 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   # ф-ия - текущая погода в указанном городе
   def weather(city = nil, *)
 
-   # инициализация класса погоды
-   weather_answer = GetWeather.new(city)
-   # дать запрос и получить ответ с погодой 
-   # weather_answer.get_current_weather
-   # дальнейшие действия и сообщения в зависимости от кода ответа
-   # определение, прошел ли запрос успешно
-   case weather_answer.get_current_weather.code
-    # если код 200 ок то работаем дальше
-    when '200' then
-      # получаем ответ из хелпера в удобочитаемом формате
-      weather_to_user = weather_list(JSON.parse(weather_answer.get_current_weather.body))
-      respond_with :message, text: weather_to_user
-    when '404'
-      respond_with :message, text: "Неверное написано название города или на Ваш город не дается прогноз. 
-      Список поддерживаемых городов можно увидеть тут http://bulk.openweathermap.org/sample/"
-    else
-      respond_with :message, text: "Что то пошло не так"
-    end
+    # инициализация класса погоды
+    weather_answer = GetWeather.new(city)
+    #url = "http://api.openweathermap.org/data/2.5/weather?q=#{@city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric"
+    # в конце приписана русская локализация и единицы измерения в с-ме СИ
 
-  end
+    url = "http://api.openweathermap.org/data/2.5/weather?q=#{city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric"
+    ask = weather_answer.get_weather(url)
+    validate(ask)
+
+    # получаем ответ из хелпера в удобочитаемом формате
+    weather_to_user = weather_list(JSON.parse(ask.body))
+    respond_with :message, text: weather_to_user
+
+   end
 
 
 #------------------------------------------------
@@ -95,8 +73,12 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   def weather3(city = nil, *)
     # инициализация класса погоды
     weather_answer = GetWeather.new(city)
+    url = "http://api.openweathermap.org/data/2.5/forecast?q=#{city}&APPID=f13a8139e0c1140a87a69282d21af141&lang=ru&units=metric&cnt=32"
+    ask = weather_answer.get_weather(url)
+    validate(ask)
+
     # дать запрос и получить ответ с погодой на 3 дня
-    weather_to_user = weather3_list(JSON.parse(weather_answer.get_3_weather.body))
+    weather_to_user = weather3_list(JSON.parse(ask.body))
     # разбиваем ответ на несколько сообщений чтобы обойти ограничение телеграмма на макс длину сообщений в 4096 знака
     weather_to_user.each do |message|
       respond_with :message, text: message
@@ -114,5 +96,20 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     respond_with :message, text: rate_to_user
   end
 
+
+  # ф-ия для валидации кода ответа
+  def validate(value)
+    case value.code
+    when '200'
+      # получаем ответ из хелпера в удобочитаемом формате
+      #weather_to_user = weather_list(JSON.parse(weather_answer.get_weather(url).body))
+      respond_with :message, text: 'ответ получен'
+    when '404'
+      respond_with :message, text: "Неверное написано название города или на Ваш город не дается прогноз. 
+      Список поддерживаемых городов можно увидеть тут http://bulk.openweathermap.org/sample/"
+    else
+      respond_with :message, text: "Что то пошло не так"
+    end
+  end
 
 end
