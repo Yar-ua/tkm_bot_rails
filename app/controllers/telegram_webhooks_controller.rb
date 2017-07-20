@@ -105,8 +105,8 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
       #weather_to_user = weather_list(JSON.parse(weather_answer.get_weather(url).body))
       respond_with :message, text: 'ответ получен'
     when '404'
-      respond_with :message, text: "Неверное написано название города или на Ваш город не дается прогноз. 
-      Список поддерживаемых городов можно увидеть тут http://bulk.openweathermap.org/sample/"
+      # respond_with :message, text: "Неверное написано название города или на Ваш город не дается прогноз. 
+      # Список поддерживаемых городов можно увидеть тут http://bulk.openweathermap.org/sample/"
     else
       # respond_with :message, text: "Что то пошло не так"
     end
