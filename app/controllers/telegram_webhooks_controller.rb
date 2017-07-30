@@ -42,11 +42,67 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     respond_with :message, text: t('.content')
   end
 
-  
-  # ответ бота по команде /help, команда нуждается в доработке
-  #def help(*)
-  #  respond_with :message, text: t('.content')
-  #end
+
+  def help 
+    respond_with :message, text: 'Перечень команд бота', reply_markup: {
+      inline_keyboard: [
+        [ {text: 'текущая погода',    callback_data: 'weather'}, ],
+        [ {text: 'погода на 3 дня',   callback_data: 'weather3'}, ],
+        [ {text: 'курс валют по ПБ',  callback_data: 'rate'} ],
+      ],
+    }
+  end
+
+
+  def callback_query(data)
+    if data == 'weather'
+      respond_with :message, text: '-текущий прогноз погоды-'
+      set_city
+      respond_with :message, text: "город #%{@city}"
+    elsif data == 'weather3'
+      respond_with :message, text: '-прогноз погоды на 3 дня-'
+    elsif data == 'rate'
+      respond_with :message, text: '-текущий курс валют по ПБ-'
+      rate
+    else
+      answer_callback_query 'функция не выбрана'
+    end
+  end
+
+
+  def set_city
+    
+  end
+
+
+
+
+  def city_name(*city)
+    respond_with :message, text: 'укажите название города для получения прогноза 
+    (название город писать английскими буквами)'
+    @city = city
+  end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #------------------------------------------------
   # ф-ия - текущая погода в указанном городе
@@ -111,53 +167,6 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
       # respond_with :message, text: "Что то пошло не так"
     end
   end
-
-
-
-
-
-
-  def keyboard(value = nil, *)
-    if value
-      respond_with :message, text: t('.selected', value: value)
-    else
-      save_context :keyboard
-      respond_with :message, text: t('.prompt'), reply_markup: {
-        keyboard: [t('.buttons')],
-        resize_keyboard: true,
-        one_time_keyboard: true,
-        selective: true,
-      }
-    end
-  end
-
-
-
-
-  def help 
-    respond_with :message, text: t('.content'), reply_markup: {
-      inline_keyboard: [
-        [ {text: 'текущая погода',    callback_data: 'weather'}, ],
-        [ {text: 'погода на 3 дня',   callback_data: 'weather3'}, ],
-        [ {text: 'курс валют по ПБ',  callback_data: 'rate'} ],
-      ],
-    }
-  end
-
-
-  def callback_query(data)
-    if data == 'weather'
-      respond_with :message, text: 'you push weather button'
-    elsif 
-      respond_with :message, text: 'you push weather3 button'
-    elsif 
-      respond_with :message, text: 'you push rate button'
-    else
-      answer_callback_query t('.no_alert')
-    end
-end
-
-
 
 
 
